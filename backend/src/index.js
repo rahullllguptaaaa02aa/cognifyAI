@@ -9,65 +9,55 @@ const aiRoutes = require("./routes/ai");
 
 const app = express();
 
+// =========================
 // Middleware
+// =========================
 app.use(cors());
 app.use(express.json());
 
-// Health check
+// =========================
+// Health Check
+// =========================
 app.get("/", (req, res) => {
   res.json({
     status: "CognifyAI backend running",
-    groqConfigured: !!process.env.GROQ_API_KEY
+    groqConfigured: !!process.env.GROQ_API_KEY,
+    version: "RENDER-DEBUG-2"
   });
 });
 
-
+// =========================
+// Debug Route
+// =========================
 app.get("/debug", (req, res) => {
-  res.json({
-    message: "NEW CODE IS RUNNING",
-    version: "topics-fix-1"
+  res.status(200).json({
+    status: "DEBUG WORKS",
+    version: "RENDER-DEBUG-2"
   });
 });
 
-
-// Direct topics endpoint
-app.get("/api/ai/topics", (req, res) => {
-  res.json({
-    topics: [
-      {
-        id: "dsa",
-        label: "Data Structures & Algorithms"
-      },
-      {
-        id: "dbms",
-        label: "DBMS"
-      },
-      {
-        id: "oops",
-        label: "Object-Oriented Programming"
-      },
-      {
-        id: "os",
-        label: "Operating Systems"
-      },
-      {
-        id: "cn",
-        label: "Computer Networks"
-      },
-      {
-        id: "aptitude",
-        label: "Aptitude"
-      }
-    ]
-  });
-});
-
-// Other API routes
+// =========================
+// API Routes
+// =========================
 app.use("/api/checkpoint", checkpointRoutes);
 app.use("/api/engagement", engagementRoutes);
 app.use("/api/ai", aiRoutes);
 
-// Render provides the PORT
+// =========================
+// Catch Unknown Routes
+// MUST BE LAST
+// =========================
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Route not found",
+    path: req.originalUrl,
+    version: "RENDER-DEBUG-2"
+  });
+});
+
+// =========================
+// Start Server
+// =========================
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, "0.0.0.0", () => {
