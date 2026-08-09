@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const express = require("express");
-const cors = require("cors");
 
 const checkpointRoutes = require("./routes/checkpoint");
 const engagementRoutes = require("./routes/engagement");
@@ -9,59 +8,73 @@ const aiRoutes = require("./routes/ai");
 
 const app = express();
 
-// =========================
-// CORS
-// =========================
+// ==========================================
+// CORS - MUST COME BEFORE ALL API ROUTES
+// ==========================================
 
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use((req, res, next) => {
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://cognify-ai-one.vercel.app"
+  );
 
-app.options("*", cors());
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET,POST,PUT,DELETE,OPTIONS"
+  );
 
-// =========================
-// Body Parser
-// =========================
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
+
+  // Handle browser preflight requests
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
+// ==========================================
+// JSON
+// ==========================================
 
 app.use(express.json());
 
-// =========================
-// Health
-// =========================
+// ==========================================
+// HEALTH CHECK
+// ==========================================
 
 app.get("/", (req, res) => {
   res.json({
     status: "CognifyAI backend running",
-    groqConfigured: !!process.env.GROQ_API_KEY,
+    groqConfigured: !!process.env.GROQ_API_KEY
   });
 });
 
-// =========================
-// API
-// =========================
+// ==========================================
+// API ROUTES
+// ==========================================
 
 app.use("/api/checkpoint", checkpointRoutes);
 app.use("/api/engagement", engagementRoutes);
 app.use("/api/ai", aiRoutes);
 
-// =========================
+// ==========================================
 // 404
-// =========================
+// ==========================================
 
 app.use((req, res) => {
   res.status(404).json({
     error: "Route not found",
-    path: req.originalUrl,
+    path: req.originalUrl
   });
 });
 
-// =========================
-// Server
-// =========================
+// ==========================================
+// SERVER
+// ==========================================
 
 const PORT = process.env.PORT || 5000;
 
