@@ -8,73 +8,87 @@ const aiRoutes = require("./routes/ai");
 
 const app = express();
 
-// ==========================================
-// CORS - MUST COME BEFORE ALL API ROUTES
-// ==========================================
+// ==============================
+// CORS
+// ==============================
 
 app.use((req, res, next) => {
-  res.header(
+  res.setHeader(
     "Access-Control-Allow-Origin",
     "https://cognify-ai-one.vercel.app"
   );
-
-  res.header(
+  res.setHeader(
     "Access-Control-Allow-Methods",
     "GET,POST,PUT,DELETE,OPTIONS"
   );
-
-  res.header(
+  res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization"
   );
 
-  // Handle browser preflight requests
   if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
+    return res.status(204).end();
   }
 
   next();
 });
 
-// ==========================================
-// JSON
-// ==========================================
-
 app.use(express.json());
 
-// ==========================================
-// HEALTH CHECK
-// ==========================================
+// ==============================
+// HEALTH
+// ==============================
 
 app.get("/", (req, res) => {
   res.json({
     status: "CognifyAI backend running",
+    version: "FINAL-FIX-1",
     groqConfigured: !!process.env.GROQ_API_KEY
   });
 });
 
-// ==========================================
-// API ROUTES
-// ==========================================
+// ==============================
+// DIRECT TOPICS TEST
+// ==============================
+
+app.get("/api/ai/topics", (req, res) => {
+  res.json({
+    topics: [
+      { id: "dsa", label: "Data Structures & Algorithms" },
+      { id: "oops", label: "OOP Concepts" },
+      { id: "dbms", label: "DBMS" },
+      { id: "os", label: "Operating Systems" },
+      { id: "cn", label: "Computer Networks" },
+      { id: "aptitude", label: "Quantitative Aptitude" },
+      { id: "hr", label: "HR / Behavioral" },
+      { id: "system-design", label: "System Design Basics" }
+    ]
+  });
+});
+
+// ==============================
+// NORMAL API ROUTES
+// ==============================
 
 app.use("/api/checkpoint", checkpointRoutes);
 app.use("/api/engagement", engagementRoutes);
 app.use("/api/ai", aiRoutes);
 
-// ==========================================
+// ==============================
 // 404
-// ==========================================
+// ==============================
 
 app.use((req, res) => {
   res.status(404).json({
     error: "Route not found",
-    path: req.originalUrl
+    path: req.originalUrl,
+    version: "FINAL-FIX-1"
   });
 });
 
-// ==========================================
+// ==============================
 // SERVER
-// ==========================================
+// ==============================
 
 const PORT = process.env.PORT || 5000;
 
