@@ -1,7 +1,4 @@
-// Talks to our backend, which talks to Groq server-side.
-// The Groq API key never touches the browser.
-
-const API_BASE = "/api";
+const API_BASE = "https://cognifyai-wyh3.onrender.com/api";
 
 async function post(path, body) {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -35,14 +32,22 @@ export const api = {
   getQuestion: (topicId) =>
     post("/ai/question", { topicId }),
 
-  scoreExplanation: (question, aiAnswer, studentExplanation) =>
+  scoreExplanation: (
+    question,
+    aiAnswer,
+    studentExplanation
+  ) =>
     post("/ai/score-explanation", {
       question,
       aiAnswer,
       studentExplanation,
     }),
 
-  getFollowUp: (question, aiAnswer, studentExplanation) =>
+  getFollowUp: (
+    question,
+    aiAnswer,
+    studentExplanation
+  ) =>
     post("/ai/followup", {
       question,
       aiAnswer,
