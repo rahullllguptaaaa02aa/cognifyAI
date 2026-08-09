@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, setDoc, getDoc, query, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "./firebase";
 
 export async function logAIReceipt(studentId, receipt) {
