@@ -21,13 +21,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// API routes
-app.use("/api/checkpoint", checkpointRoutes);
-app.use("/api/engagement", engagementRoutes);
-app.use("/api/ai", aiRoutes);
-
 // Direct topics endpoint
-// This ensures the deployed backend can always provide the topic list.
 app.get("/api/ai/topics", (req, res) => {
   res.json({
     topics: [
@@ -59,7 +53,12 @@ app.get("/api/ai/topics", (req, res) => {
   });
 });
 
-// Render provides PORT through environment variables
+// Other API routes
+app.use("/api/checkpoint", checkpointRoutes);
+app.use("/api/engagement", engagementRoutes);
+app.use("/api/ai", aiRoutes);
+
+// Render provides the PORT
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, "0.0.0.0", () => {
