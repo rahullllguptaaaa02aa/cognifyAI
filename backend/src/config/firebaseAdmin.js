@@ -2,7 +2,7 @@ const admin = require("firebase-admin");
 const path = require("path");
 const fs = require("fs");
 
-const keyPath = path.join(__dirname, "serviceAccountKey.json");
+const keyPath = "/etc/secrets/serviceAccountKey.json";
 
 if (!fs.existsSync(keyPath)) {
   console.warn(
