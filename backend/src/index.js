@@ -10,9 +10,25 @@ const aiRoutes = require("./routes/ai");
 const app = express();
 
 // =========================
+// CORS
+// =========================
+app.use(
+  cors({
+    origin: [
+      "https://cognify-ai-one.vercel.app",
+      "https://cognifyai-wyh3.onrender.com",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// Handle browser preflight requests
+app.options("*", cors());
+
+// =========================
 // Middleware
 // =========================
-app.use(cors());
 app.use(express.json());
 
 // =========================
@@ -22,7 +38,7 @@ app.get("/", (req, res) => {
   res.json({
     status: "CognifyAI backend running",
     groqConfigured: !!process.env.GROQ_API_KEY,
-    version: "RENDER-DEBUG-2"
+    version: "CORS-FIX-1",
   });
 });
 
@@ -30,9 +46,9 @@ app.get("/", (req, res) => {
 // Debug Route
 // =========================
 app.get("/debug", (req, res) => {
-  res.status(200).json({
+  res.json({
     status: "DEBUG WORKS",
-    version: "RENDER-DEBUG-2"
+    version: "CORS-FIX-1",
   });
 });
 
@@ -51,7 +67,6 @@ app.use((req, res) => {
   res.status(404).json({
     error: "Route not found",
     path: req.originalUrl,
-    version: "RENDER-DEBUG-2"
   });
 });
 
