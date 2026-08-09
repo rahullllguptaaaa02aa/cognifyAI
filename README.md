@@ -1,100 +1,163 @@
-# CognifyAI — Prove You Understood It
+# 🧠 CognifyAI
 
-**The problem:** Students increasingly copy a question into ChatGPT/Claude/etc., paste the
-answer, and submit — without engaging with the material at all ("cognitive offloading").
-Bans don't work. AI-text detectors are an unwinnable arms race. Grades stay fine while real
-understanding quietly collapses, and nobody notices until exam time.
+### Prove You Understood It — Not Just That You Got the Answer.
 
-**The idea:** Don't fight AI use — make it structurally require actual understanding. Every
-AI-assisted answer has to survive a short gauntlet before it counts as "done": explain it
-simply enough to satisfy a confused-kid follow-up, then solve a fresh twin problem *without*
-AI help. This is the hardest part of the whole pitch to fake, and it's the technical core of
-the product.
+> **CognifyAI transforms AI-assisted learning from passive answer copying into active understanding.**
 
-```
-cognifyai/
-├── frontend/     React app — practice flow, teacher dashboard, engagement engine
-├── backend/      Node.js/Express — twin-problem generation, hint ladder, scoring API
-└── README.md     (this file)
-```
+Students increasingly use AI tools like ChatGPT and Claude to solve questions, often copying the generated answers without actually understanding them.
 
-## 1. Prerequisites
-- Node.js 18+, npm
-- A free Firebase project (console.firebase.google.com)
+Traditional AI detectors try to answer:
 
-## 2. Firebase setup
+> **"Did AI write this?"**
 
-1. console.firebase.google.com → **Add project** → name it `cognifyai`.
-2. **Web icon (</>)** → register app → copy the `firebaseConfig` object.
-3. Paste it into `frontend/src/firebase.js` (marked `TODO`).
-4. **Build → Authentication → enable "Email/Password"** (+ Anonymous for quick demo logins).
-5. **Build → Firestore Database → Create database → Start in test mode.**
-6. **Project settings → Service accounts → Generate new private key** → save as
-   `backend/src/config/serviceAccountKey.json`.
+CognifyAI asks a much better question:
 
-## 3. Get a Groq API key — real AI, genuinely free tier
+> **"Did the student actually understand it?"**
 
-1. Go to https://console.groq.com and sign up / log in.
-2. **API Keys** (left sidebar) → **Create API Key** → copy it.
-3. This is a **real free tier** — no card required, rate-limited (requests/tokens per
-   minute) rather than metered by cost. Check your exact limits anytime at
-   **Settings → Billing** in the console. If you ever add a payment method there,
-   you've moved to pay-as-you-go — but simply creating a key doesn't charge you anything.
-4. Copy `backend/.env.example` to `backend/.env` and paste your key:
-   ```
-   GROQ_API_KEY=gsk_your-key-here
-   ```
+Instead of fighting AI usage, CognifyAI makes understanding a **requirement**.
 
-**No key yet, or want a free walkthrough first?** The app still runs — every AI call has
-a built-in fallback (template questions, keyword-based grading) so nothing breaks. You'll
-see a small "Offline fallback" tag on screen instead of "Live Groq response" when this
-happens, so it's always clear which mode you're in — useful to know if a judge asks.
+---
 
-## 4. Run it
+## 🚀 The Problem
 
-```bash
-cd backend && npm install && npm run dev     # http://localhost:5000
-cd frontend && npm install && npm start      # http://localhost:3000
-```
+AI has made getting answers easier than ever.
 
-Check `http://localhost:5000` in your browser — it should show
-`{"status":"CognifyAI backend running","groqConfigured":true}`. If `groqConfigured` is
-`false`, your `.env` key isn't being picked up — double check the file is named exactly
-`.env` (not `.env.example`) and is in the `backend/` folder.
+A student can:
 
-**About rate limits during your demo**: Groq's free tier caps requests per minute (varies
-by model — check the exact number in your console). Each full checkpoint flow (question →
-explanation score → follow-up → twin problem → grading) makes about 4 calls. Fine for a
-live demo walked through once or twice; if you're doing many rapid back-to-back runs while
-rehearsing, you might hit the limit — that's exactly when the fallback mode kicks in
-automatically, so rehearsal won't break, it'll just show "Offline fallback" for a bit.
+1. Copy a question into an AI tool.
+2. Get a detailed solution.
+3. Submit the answer.
+4. Move on without learning anything.
 
-## 5. The features — now all backed by real Groq calls
+The result is **cognitive offloading** — the student completes the task while gradually losing the ability to solve similar problems independently.
 
-| Feature | What it does | Status |
-|---|---|---|
-| **Question generation** | Groq generates a fresh placement-interview question + full answer, for any topic you pick | ✅ Real, live per-request |
-| **Understanding Checkpoint** | Student explains the AI's answer; Groq scores whether it shows real understanding vs. copying | ✅ Real semantic scoring via Groq |
-| **Confused-kid follow-up** | Groq generates a genuine one-line follow-up question based on the student's specific explanation | ✅ Real, contextual each time |
-| **Twin Problem** | Groq generates a structurally similar but new problem — works for ANY topic, not just math | ✅ Real, and open-ended answers are graded by Groq too |
-| **Confidence Calibration** | Tracks self-assessed confidence vs. actual correctness over time | ✅ Real, fully working (no AI needed for this one) |
-| **AI Receipts** | Transparent, teacher-visible log of every AI interaction + how it was resolved | ✅ Real Firestore log |
-| **Engagement Decay Curve** | Per-subject trend line of engagement score over weeks, flags decline early | ✅ Real, computed from live Firestore data |
+AI-text detectors are not a sustainable solution because they attempt to identify *how* an answer was produced.
 
-**Every AI call has a safety-net fallback** (template questions, keyword-based grading) so
-a flaky connection or rate limit never breaks your live demo — it just quietly switches to
-"Offline fallback" mode, visibly tagged on screen so you always know which mode you're in.
+### CognifyAI takes a different approach.
 
-## 5. Why these design choices, if a judge asks
+We don't care whether AI was used.
 
-- **Why a twin problem instead of just an explanation check?** Explanations can be gamed by
-  asking the AI itself to "explain simply" — that's just outsourcing twice. A twin problem
-  solved with no AI assistance is the one signal that's actually hard to fake.
-- **Why not just detect AI-generated text?** That fight is already lost — detectors have high
-  false-positive/negative rates and every new model update breaks them again. This product
-  sidesteps the arms race entirely by not caring *whether* AI was used, only whether
-  understanding resulted.
-- **Why a trend line, not a single "AI usage %" number for teachers?** A raw usage percentage
-  is a moralizing, low-signal metric — heavy AI use with strong twin-problem performance is
-  fine. A *declining* engagement trend, regardless of AI usage volume, is the actual early
-  warning sign worth a teacher's attention.
+We care whether **learning happened**.
+
+---
+
+# 💡 Our Solution
+
+CognifyAI adds an **Understanding Checkpoint** after every AI-assisted learning interaction.
+
+### The learning loop
+
+```text
+          AI ASSISTANCE
+                ↓
+        Student gets solution
+                ↓
+      ┌─────────────────────┐
+      │ Understanding Check │
+      └─────────────────────┘
+                ↓
+       Explain it simply
+                ↓
+       Confused-Kid Follow-up
+                ↓
+         Fresh Twin Problem
+                ↓
+       Solve WITHOUT AI
+                ↓
+       ┌─────────────────────┐
+       │ Understanding Score │
+       └─────────────────────┘
+                ↓
+        Learning Recorded
+
+The student cannot simply copy an answer and move on.
+
+They must demonstrate understanding.
+
+✨ Key Features
+Feature	What It Does
+🎯 AI Question Generation	Generates fresh, topic-specific questions using Groq
+🧠 Understanding Checkpoint	Evaluates whether the student actually understands the AI-generated solution
+👶 Confused-Kid Follow-up	Generates a contextual follow-up based on the student's explanation
+🔄 Twin Problem	Creates a structurally similar but completely new problem
+📊 Confidence Calibration	Compares student's confidence with actual correctness
+🧾 AI Receipts	Maintains a transparent record of AI interactions and outcomes
+📉 Engagement Decay Curve	Tracks engagement trends over time and identifies declining understanding
+🛡️ Offline Fallback	Automatically switches to fallback logic if AI services are unavailable
+🧩 How CognifyAI Works
+1. Generate
+
+The student chooses a topic.
+
+CognifyAI generates a fresh question using Groq.
+
+2. Understand
+
+The student receives an AI-assisted explanation.
+
+Instead of simply accepting the answer, CognifyAI asks the student to explain the concept in their own words.
+
+3. Challenge
+
+CognifyAI asks a short contextual question based on the student's explanation.
+
+This makes it much harder to simply paste another AI-generated response.
+
+4. Prove
+
+The system generates a Twin Problem.
+
+It has the same underlying concept but different values, structure, or context.
+
+The student must solve it independently.
+
+Original Problem
+       ↓
+AI-assisted Solution
+       ↓
+Student Explanation
+       ↓
+Follow-up Question
+       ↓
+New Twin Problem
+       ↓
+Independent Solution
+       ↓
+Understanding Score
+🏗️ Architecture
+CognifyAI
+│
+├── frontend/
+│   ├── React Application
+│   ├── Student Practice Flow
+│   ├── Teacher Dashboard
+│   ├── Engagement Engine
+│   └── AI Receipts
+│
+├── backend/
+│   ├── Node.js
+│   ├── Express.js
+│   ├── Groq API Integration
+│   ├── Twin Problem Generator
+│   ├── Hint Ladder
+│   └── Scoring API
+│
+└── README.md
+🛠️ Tech Stack
+Frontend
+React
+JavaScript
+CSS
+Firebase
+Backend
+Node.js
+Express.js
+Groq API
+REST APIs
+Database & Authentication
+Firebase Authentication
+Cloud Firestore
+Development
+Git
+GitHub
+npm
