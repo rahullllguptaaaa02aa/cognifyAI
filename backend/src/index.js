@@ -21,6 +21,15 @@ app.get("/", (req, res) => {
   });
 });
 
+
+app.get("/debug", (req, res) => {
+  res.json({
+    message: "NEW CODE IS RUNNING",
+    version: "topics-fix-1"
+  });
+});
+
+
 // Direct topics endpoint
 app.get("/api/ai/topics", (req, res) => {
   res.json({
