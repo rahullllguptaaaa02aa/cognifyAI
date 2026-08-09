@@ -1,5 +1,5 @@
 // Talks to our backend, which talks to Grok server-side (key never touches the browser).
-const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:5000/api";
+const API_BASE = "https://cognifyai-wyh3.onrender.com/api";;
 
 async function post(path, body) {
   const res = await fetch(`${API_BASE}${path}`, {
