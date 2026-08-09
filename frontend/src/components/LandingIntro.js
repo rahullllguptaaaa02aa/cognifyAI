@@ -80,7 +80,7 @@ export default function LandingIntro({ theme, dark, onToggleDark, onStart }) {
         </h1>
 
         <p style={{
-          fontSize: 15.5, opacity: 0.65, lineHeight: 1.7, maxWidth: 560, margin: "0 auto 34px",
+          fontSize: 15.5, lineHeight: 1.7, maxWidth: 560, margin: "0 auto 34px",
           transitionDelay: "0.2s", transition: "all 0.6s ease", transform: visible ? "translateY(0)" : "translateY(12px)", opacity: visible ? 0.65 : 0,
         }}>
           Banning AI doesn't work. Detecting AI-written text is a losing arms race.
