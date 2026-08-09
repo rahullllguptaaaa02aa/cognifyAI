@@ -1,22 +1,28 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
-    const path = Array.isArray(req.query.path)
-      ? req.query.path.join("/")
-      : req.query.path || "";
+    const pathParts = req.query.path;
+
+    const path = Array.isArray(pathParts)
+      ? pathParts.join("/")
+      : pathParts || "";
 
     const backendUrl =
       `https://cognifyai-wyh3.onrender.com/api/${path}`;
 
-    const response = await fetch(backendUrl, {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    const options = {
       method: req.method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body:
-        req.method === "GET" || req.method === "HEAD"
-          ? undefined
-          : JSON.stringify(req.body),
-    });
+      headers,
+    };
+
+    if (req.method !== "GET" && req.method !== "HEAD") {
+      options.body = JSON.stringify(req.body);
+    }
+
+    const response = await fetch(backendUrl, options);
 
     const data = await response.text();
 
@@ -28,13 +34,13 @@ export default async function handler(req, res) {
         "application/json"
     );
 
-    res.send(data);
+    return res.send(data);
   } catch (error) {
-    console.error("Proxy error:", error);
+    console.error("Vercel proxy error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       error: "Backend proxy failed",
       message: error.message,
     });
   }
-}
+};
